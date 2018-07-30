@@ -8,6 +8,8 @@ import SysTools
 import Packages
 import LinkOptions
 
+import GHC
+
 main :: IO ()
 main = do
 	args0 <- getArgs
@@ -19,6 +21,8 @@ main = do
 	myLlvmConfig <- initLlvmTargets mbMinusB
 	dflags0 <- initDynFlags
 		$ defaultDynFlags mySettings myLlvmConfig
-	(dflags, _) <- initPackages dflags0
-	lopts <- getLinkOptions False dflags args1 []
+	(dflags1, _, _) <- parseDynamicFlags dflags0
+		$ map (mkGeneralLocated "") args1
+	(dflags2, _) <- initPackages dflags1
+	lopts <- getLinkOptions False dflags2 args1 []
 	putStrLn . unwords $ map showOpt lopts
