@@ -3,3 +3,5 @@ ghc-link.cabal
 *~
 *.hi
 *.o
+.html/
+.exe/
