@@ -12,7 +12,7 @@ import GHC
 
 main :: IO ()
 main = do
-	args0 <- getArgs
+	cmd : args0 <- getArgs
 	let	(minusB_args, args1) = partition ("-B" `isPrefixOf`) args0
 		mbMinusB
 			| null minusB_args = Nothing
@@ -25,4 +25,12 @@ main = do
 		$ map (mkGeneralLocated "") args1
 	(dflags2, _) <- initPackages dflags1
 	lopts <- getLinkOptions False dflags2 args1 []
-	putStrLn . unwords $ map showOpt lopts
+	case cmd of
+		"options" -> putStrLn . unwords $ map showOpt lopts
+		"noLinkerOpt" -> putStr . unlines
+			. filter (not . ("-Wl," `isPrefixOf`))
+			$ map showOpt lopts
+		"onlyLinkerOpt" -> putStr . unlines
+			. map (drop 4) . filter ("-Wl," `isPrefixOf`)
+			$ map showOpt lopts
+		_ -> putStrLn $ "no such command: " ++ cmd
