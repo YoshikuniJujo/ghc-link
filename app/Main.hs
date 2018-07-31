@@ -21,10 +21,10 @@ main = do
 	myLlvmConfig <- initLlvmTargets mbMinusB
 	dflags0 <- initDynFlags
 		$ defaultDynFlags mySettings myLlvmConfig
-	(dflags1, _, _) <- parseDynamicFlags dflags0
+	(dflags1, args2, _) <- parseDynamicFlags dflags0
 		$ map (mkGeneralLocated "") args1
 	(dflags2, _) <- initPackages dflags1
-	lopts <- getLinkOptions False dflags2 args1 []
+	lopts <- getLinkOptions False dflags2 (map unLoc args2) []
 	case cmd of
 		"options" -> putStrLn . unwords $ map showOpt lopts
 		"noLinkerOpt" -> putStr . unlines
